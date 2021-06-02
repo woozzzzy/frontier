@@ -10,7 +10,6 @@ use fc_consensus::FrontierBlockImport;
 use fc_mapping_sync::MappingSyncWorker;
 use frontier_template_runtime::{self, opaque::Block, RuntimeApi, SLOT_DURATION};
 use sc_service::{error::Error as ServiceError, Configuration, TaskManager, BasePath};
-use sp_inherents::{InherentDataProviders, ProvideInherentData, InherentIdentifier, InherentData};
 use sc_executor::native_executor_instance;
 pub use sc_executor::NativeExecutor;
 use sc_consensus_aura::{ImportQueueParams, StartAuraParams, SlotProportion};
@@ -21,6 +20,8 @@ use sc_telemetry::{Telemetry, TelemetryWorker};
 use sc_cli::SubstrateCli;
 use futures::StreamExt;
 use sp_core::U256;
+use sp_consensus::SlotData;
+use sc_consensus_aura::slot_duration;
 
 use crate::cli::Cli;
 #[cfg(feature = "manual-seal")]
@@ -55,34 +56,6 @@ pub type ConsensusResult = (
 #[cfg(feature = "manual-seal")]
 pub type ConsensusResult = (FrontierBlockImport<Block, Arc<FullClient>, FullClient>, Sealing);
 
-/// Provide a mock duration starting at 0 in millisecond for timestamp inherent.
-/// Each call will increment timestamp by slot_duration making Aura think time has passed.
-pub struct MockTimestampInherentDataProvider;
-
-pub const INHERENT_IDENTIFIER: InherentIdentifier = *b"timstap0";
-
-thread_local!(static TIMESTAMP: RefCell<u64> = RefCell::new(0));
-
-impl ProvideInherentData for MockTimestampInherentDataProvider {
-	fn inherent_identifier(&self) -> &'static InherentIdentifier {
-		&INHERENT_IDENTIFIER
-	}
-
-	fn provide_inherent_data(
-		&self,
-		inherent_data: &mut InherentData,
-	) -> Result<(), sp_inherents::Error> {
-		TIMESTAMP.with(|x| {
-			*x.borrow_mut() += SLOT_DURATION;
-			inherent_data.put_data(INHERENT_IDENTIFIER, &*x.borrow())
-		})
-	}
-
-	fn error_to_string(&self, error: &[u8]) -> Option<String> {
-		InherentError::try_from(&INHERENT_IDENTIFIER, error).map(|e| format!("{:?}", e))
-	}
-}
-
 pub fn open_frontier_backend(config: &Configuration) -> Result<Arc<fc_db::Backend<Block>>, String> {
 	let config_dir = config.base_path.as_ref()
 		.map(|base_path| base_path.config_dir(config.chain_spec.id()))
@@ -107,7 +80,7 @@ pub fn new_partial(config: &Configuration, #[allow(unused_variables)] cli: &Cli)
 		sc_transaction_pool::FullPool<Block, FullClient>,
 		(ConsensusResult, PendingTransactions, Option<FilterPool>, Arc<fc_db::Backend<Block>>, Option<Telemetry>),
 >, ServiceError> {
-	let inherent_data_providers = sp_inherents::InherentDataProviders::new();
+	let target_gas_price = U256::from(cli.run.target_gas_price);
 
 	let telemetry = config.telemetry_endpoints.clone()
 		.filter(|x| !x.is_empty())
@@ -152,15 +125,6 @@ pub fn new_partial(config: &Configuration, #[allow(unused_variables)] cli: &Cli)
 	#[cfg(feature = "manual-seal")] {
 		let sealing = cli.run.sealing;
 
-		inherent_data_providers
-			.register_provider(MockTimestampInherentDataProvider)
-			.map_err(Into::into)
-			.map_err(sp_consensus::error::Error::InherentData)?;
-		inherent_data_providers
-			.register_provider(pallet_dynamic_fee::InherentDataProvider(U256::from(cli.run.target_gas_price)))
-			.map_err(Into::into)
-			.map_err(sp_consensus::Error::InherentData)?;
-
 		let frontier_block_import = FrontierBlockImport::new(
 			client.clone(),
 			client.clone(),
@@ -175,7 +139,7 @@ pub fn new_partial(config: &Configuration, #[allow(unused_variables)] cli: &Cli)
 
 		Ok(sc_service::PartialComponents {
 			client, backend, task_manager, import_queue, keystore_container,
-			select_chain, transaction_pool, inherent_data_providers,
+			select_chain, transaction_pool,
 			other: (
 				(frontier_block_import, sealing),
 				pending_transactions,
@@ -187,11 +151,6 @@ pub fn new_partial(config: &Configuration, #[allow(unused_variables)] cli: &Cli)
 	}
 
 	#[cfg(feature = "aura")] {
-		inherent_data_providers
-			.register_provider(pallet_dynamic_fee::InherentDataProvider(U256::from(cli.run.target_gas_price)))
-			.map_err(Into::into)
-			.map_err(sp_consensus::Error::InherentData)?;
-
 		let (grandpa_block_import, grandpa_link) = sc_finality_grandpa::block_import(
 			client.clone(),
 			&(client.clone() as Arc<_>),
@@ -209,24 +168,38 @@ pub fn new_partial(config: &Configuration, #[allow(unused_variables)] cli: &Cli)
 			frontier_block_import, client.clone(),
 		);
 
-		let import_queue = sc_consensus_aura::import_queue::<AuraPair, _, _, _, _, _>(
+		let slot_duration = sc_consensus_aura::slot_duration(&*client)?;
+		let raw_slot_duration = slot_duration.slot_duration();
+
+		let import_queue = sc_consensus_aura::import_queue::<AuraPair, _, _, _, _, _, _>(
 			ImportQueueParams {
-				slot_duration: sc_consensus_aura::slot_duration(&*client)?,
 				block_import: aura_block_import.clone(),
 				justification_import: Some(Box::new(grandpa_block_import.clone())),
 				client: client.clone(),
-				inherent_data_providers: inherent_data_providers.clone(),
+				create_inherent_data_providers: move |_, ()| async move {
+					let timestamp = sp_timestamp::InherentDataProvider::from_system_time();
+
+					let slot =
+						sp_consensus_aura::inherents::InherentDataProvider::from_timestamp_and_duration(
+							*timestamp,
+							raw_slot_duration,
+						);
+
+					let fee = pallet_dynamic_fee::InherentDataProvider(target_gas_price);
+
+					Ok((timestamp, slot, fee))
+				},
 				spawner: &task_manager.spawn_essential_handle(),
-				registry: config.prometheus_registry(),
 				can_author_with: sp_consensus::CanAuthorWithNativeVersion::new(client.executor().clone()),
+				registry: config.prometheus_registry(),
 				check_for_equivocation: Default::default(),
 				telemetry: telemetry.as_ref().map(|x| x.handle()),
-			}
+			},
 		)?;
 
 		Ok(sc_service::PartialComponents {
 			client, backend, task_manager, import_queue, keystore_container,
-			select_chain, transaction_pool, inherent_data_providers,
+			select_chain, transaction_pool,
 			other: (
 				(aura_block_import, grandpa_link),
 				pending_transactions,
@@ -244,10 +217,11 @@ pub fn new_full(
 	cli: &Cli,
 ) -> Result<TaskManager, ServiceError> {
 	let enable_dev_signer = cli.run.enable_dev_signer;
+	let target_gas_price = U256::from(cli.run.target_gas_price);
 
 	let sc_service::PartialComponents {
 		client, backend, mut task_manager, import_queue, keystore_container,
-		select_chain, transaction_pool, inherent_data_providers,
+		select_chain, transaction_pool,
 		other: (consensus_result, pending_transactions, filter_pool, frontier_backend, mut telemetry),
 	} = new_partial(&config, cli)?;
 
@@ -425,22 +399,38 @@ pub fn new_full(
 
 			let can_author_with =
 				sp_consensus::CanAuthorWithNativeVersion::new(client.executor().clone());
-			let aura = sc_consensus_aura::start_aura::<AuraPair, _, _, _, _, _, _, _, _, _>(
+
+			let slot_duration = sc_consensus_aura::slot_duration(&*client)?;
+			let raw_slot_duration = slot_duration.slot_duration();
+
+			let aura = sc_consensus_aura::start_aura::<AuraPair, _, _, _, _, _, _, _, _, _, _>(
 				StartAuraParams {
-					slot_duration: sc_consensus_aura::slot_duration(&*client)?,
+					slot_duration,
 					client: client.clone(),
 					select_chain,
 					block_import: aura_block_import,
 					proposer_factory: proposer,
-					sync_oracle: network.clone(),
-					inherent_data_providers: inherent_data_providers.clone(),
+					create_inherent_data_providers: move |_, ()| async move {
+						let timestamp = sp_timestamp::InherentDataProvider::from_system_time();
+
+						let slot =
+							sp_consensus_aura::inherents::InherentDataProvider::from_timestamp_and_duration(
+								*timestamp,
+								raw_slot_duration,
+							);
+
+						let fee = pallet_dynamic_fee::InherentDataProvider(target_gas_price);
+
+						Ok((timestamp, slot, fee))
+					},
 					force_authoring,
 					backoff_authoring_blocks,
 					keystore: keystore_container.sync_keystore(),
 					can_author_with,
+					sync_oracle: network.clone(),
 					block_proposal_slot_portion: SlotProportion::new(2f32 / 3f32),
 					telemetry: telemetry.as_ref().map(|x| x.handle()),
-				}
+				},
 			)?;
 
 			// the AURA authoring task is considered essential, i.e. if it
@@ -537,19 +527,30 @@ pub fn new_light(config: Configuration) -> Result<TaskManager, ServiceError> {
 		telemetry.as_ref().map(|x| x.handle()),
 	)?;
 
-	let import_queue = sc_consensus_aura::import_queue::<AuraPair, _, _, _, _, _>(
+	let slot_duration = sc_consensus_aura::slot_duration(&*client)?.slot_duration();
+
+	let import_queue = sc_consensus_aura::import_queue::<AuraPair, _, _, _, _, _, _>(
 		ImportQueueParams {
-			slot_duration: sc_consensus_aura::slot_duration(&*client)?,
 			block_import: grandpa_block_import.clone(),
-			justification_import: Some(Box::new(grandpa_block_import)),
+			justification_import: Some(Box::new(grandpa_block_import.clone())),
 			client: client.clone(),
-			inherent_data_providers: InherentDataProviders::new(),
+			create_inherent_data_providers: move |_, ()| async move {
+				let timestamp = sp_timestamp::InherentDataProvider::from_system_time();
+
+				let slot =
+					sp_consensus_aura::inherents::InherentDataProvider::from_timestamp_and_duration(
+						*timestamp,
+						slot_duration,
+					);
+
+				Ok((timestamp, slot))
+			},
 			spawner: &task_manager.spawn_essential_handle(),
-			registry: config.prometheus_registry(),
 			can_author_with: sp_consensus::NeverCanAuthor,
+			registry: config.prometheus_registry(),
 			check_for_equivocation: Default::default(),
 			telemetry: telemetry.as_ref().map(|x| x.handle()),
-		}
+		},
 	)?;
 
 	let light_deps = crate::rpc::LightDeps {
