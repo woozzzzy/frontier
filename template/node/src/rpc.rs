@@ -122,32 +122,30 @@ pub fn create_full<C, P, BE>(
 		fallback: Box::new(RuntimeApiStorageOverride::new(client.clone())),
 	});
 
-	io.extend_with(
-		EthApiServer::to_delegate(EthApi::new(
-			client.clone(),
-			pool.clone(),
-			frontier_template_runtime::TransactionConverter,
-			network.clone(),
-			pending_transactions.clone(),
-			signers,
-			overrides.clone(),
-			backend,
-			is_authority,
-			max_past_logs,
-		))
-	);
+
+	io.extend_with(EthApiServer::to_delegate(EthApi::new(
+		client.clone(),
+                pool.clone(),
+                frontier_template_runtime::TransactionConverter,
+                network.clone(),
+                pending_transactions.clone(),
+                signers,
+		overrides.clone(),
+		backend.clone(),
+		is_authority,
+		max_past_logs,
+	)));
 
 	if let Some(filter_pool) = filter_pool {
-		io.extend_with(
-			EthFilterApiServer::to_delegate(EthFilterApi::new(
-				client.clone(),
-				filter_pool.clone(),
-				500 as usize, // max stored filters
-				overrides.clone(),
-				max_past_logs,
-			))
-		);
-	}
+		io.extend_with(EthFilterApiServer::to_delegate(EthFilterApi::new(
+			client.clone(),
+			backend,
+			filter_pool.clone(),
+			500 as usize, // max stored filters
+			overrides.clone(),
+			max_past_logs,
+		)));
+        }
 
 	io.extend_with(
 		NetApiServer::to_delegate(NetApi::new(
@@ -188,7 +186,7 @@ pub fn create_full<C, P, BE>(
 		_ => {}
 	}
 
-	io
+	return io;
 }
 
 /// Instantiate all Light RPC extensions.
@@ -216,5 +214,5 @@ pub fn create_light<C, P, M, F>(
 		)
 	);
 
-	io
+	return io;
 }
