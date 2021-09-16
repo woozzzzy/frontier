@@ -937,9 +937,14 @@ impl<B, C, P, CT, BE, H: ExHashT> EthApiT for EthApi<B, C, P, CT, BE, H> where
 	}
 
 	fn transaction_by_hash(&self, hash: H256) -> Result<Option<Transaction>> {
-
-		let (hash, index) = match frontier_backend_client::load_transactions::<B, C>(self.client.as_ref(), self.backend.as_ref(), hash)
-			.map_err(|err| internal_err(format!("{:?}", err)))? {
+		let (hash, index) = match frontier_backend_client::load_transactions::<B, C>(
+			self.client.as_ref(),
+			self.backend.as_ref(),
+			hash,
+			true,
+		)
+		.map_err(|err| internal_err(format!("{:?}", err)))?
+		{
 			Some((hash, index)) => (hash, index as usize),
 			None => {
 				if let Some(pending) = &self.pending_transactions {
@@ -1037,8 +1042,14 @@ impl<B, C, P, CT, BE, H: ExHashT> EthApiT for EthApi<B, C, P, CT, BE, H> where
 	}
 
 	fn transaction_receipt(&self, hash: H256) -> Result<Option<Receipt>> {
-		let (hash, index) = match frontier_backend_client::load_transactions::<B, C>(self.client.as_ref(), self.backend.as_ref(), hash)
-			.map_err(|err| internal_err(format!("{:?}", err)))? {
+		let (hash, index) = match frontier_backend_client::load_transactions::<B, C>(
+			self.client.as_ref(),
+			self.backend.as_ref(),
+			hash,
+			true,
+		)
+		.map_err(|err| internal_err(format!("{:?}", err)))?
+		{
 			Some((hash, index)) => (hash, index as usize),
 			None => return Ok(None),
 		};

@@ -125,7 +125,13 @@ pub mod frontier_backend_client {
 		false
 	}
 
-	pub fn load_transactions<B: BlockT, C>(client: &C, backend: &fc_db::Backend<B>, transaction_hash: H256) -> RpcResult<Option<(H256, u32)>> where
+	pub fn load_transactions<B: BlockT, C>(
+		client: &C,
+		backend: &fc_db::Backend<B>,
+		transaction_hash: H256,
+		only_canonical: bool,
+	) -> RpcResult<Option<(H256, u32)>>
+	where
 		B: BlockT,
 		C: HeaderBackend<B> + 'static,
 		B: BlockT<Hash=H256> + Send + Sync + 'static,
@@ -134,25 +140,22 @@ pub mod frontier_backend_client {
 		let transaction_metadata = backend.mapping().transaction_metadata(&transaction_hash)
 			.map_err(|err| internal_err(format!("fetch aux store failed: {:?}", err)))?;
 
-			if transaction_metadata.len() == 1 {
-				Ok(Some((
-					transaction_metadata[0].ethereum_block_hash,
-					transaction_metadata[0].ethereum_index,
-				)))
-			} else if transaction_metadata.len() > 1 {
-				transaction_metadata
-					.iter()
-					.find(|meta| is_canon::<B, C>(client, meta.block_hash))
-					.map_or(
+		transaction_metadata
+			.iter()
+			.find(|meta| is_canon::<B, C>(client, meta.block_hash))
+			.map_or_else(
+				|| {
+					if !only_canonical && transaction_metadata.len() > 0 {
 						Ok(Some((
 							transaction_metadata[0].ethereum_block_hash,
 							transaction_metadata[0].ethereum_index,
-						))),
-						|meta| Ok(Some((meta.ethereum_block_hash, meta.ethereum_index))),
-					)
-			} else {
-				Ok(None)
-			}
+						)))
+					} else {
+						Ok(None)
+					}
+				},
+				|meta| Ok(Some((meta.ethereum_block_hash, meta.ethereum_index))),
+			)
 	}
 }
 
