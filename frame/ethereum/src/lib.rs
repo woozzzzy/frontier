@@ -74,22 +74,22 @@ where
 	}
 }
 
-pub struct EnsureEthereumTransaction;
-impl<O: Into<Result<RawOrigin, O>> + From<RawOrigin>> EnsureOrigin<O>
-	for EnsureEthereumTransaction
-{
-	type Success = H160;
-	fn try_origin(o: O) -> Result<Self::Success, O> {
-		o.into().and_then(|o| match o {
-			RawOrigin::EthereumTransaction(id) => Ok(id),
-		})
-	}
+// pub struct EnsureEthereumTransaction;
+// impl<O: Into<Result<RawOrigin, O>> + From<RawOrigin>> EnsureOrigin<O>
+// 	for EnsureEthereumTransaction
+// {
+// 	type Success = H160;
+// 	fn try_origin(o: O) -> Result<Self::Success, O> {
+// 		o.into().and_then(|o| match o {
+// 			RawOrigin::EthereumTransaction(id) => Ok(id),
+// 		})
+// 	}
 
-	#[cfg(feature = "runtime-benchmarks")]
-	fn successful_origin() -> O {
-		O::from(RawOrigin::EthereumTransaction(Default::default()))
-	}
-}
+// 	#[cfg(feature = "runtime-benchmarks")]
+// 	fn successful_origin() -> O {
+// 		O::from(RawOrigin::EthereumTransaction(Default::default()))
+// 	}
+// }
 
 impl<T: Config> Call<T>
 where
