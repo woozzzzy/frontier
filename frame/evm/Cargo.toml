@@ -15,15 +15,15 @@ targets = ["x86_64-unknown-linux-gnu"]
 [dependencies]
 serde = { version = "1.0.101", optional = true, features = ["derive"] }
 codec = { package = "parity-scale-codec", version = "2.0.0", default-features = false }
-frame-support = { version = "4.0.0-dev", default-features = false, git = "https://github.com/woozzzzy/substrate", branch = "bb" }
-frame-system = { version = "4.0.0-dev", default-features = false, git = "https://github.com/woozzzzy/substrate", branch = "bb" }
-pallet-timestamp = { version = "4.0.0-dev", default-features = false, git = "https://github.com/woozzzzy/substrate", branch = "bb" }
-pallet-balances = { version = "4.0.0-dev", default-features = false, git = "https://github.com/woozzzzy/substrate", branch = "bb" }
-sp-core = { version = "4.0.0-dev", default-features = false, git = "https://github.com/woozzzzy/substrate", branch = "bb" }
-sp-runtime = { version = "4.0.0-dev", default-features = false, git = "https://github.com/woozzzzy/substrate", branch = "bb" }
-sp-std = { version = "4.0.0-dev", default-features = false, git = "https://github.com/woozzzzy/substrate", branch = "bb" }
-sp-io = { version = "4.0.0-dev", default-features = false, git = "https://github.com/woozzzzy/substrate", branch = "bb" }
-frame-benchmarking = { version = "4.0.0-dev", git = "https://github.com/woozzzzy/substrate", branch = "bb", default-features = false, optional = true }
+frame-support = { version = "4.0.0-dev", default-features = false, git = "https://github.com/woozzzzy/substrate", branch = "bb-dbg" }
+frame-system = { version = "4.0.0-dev", default-features = false, git = "https://github.com/woozzzzy/substrate", branch = "bb-dbg" }
+pallet-timestamp = { version = "4.0.0-dev", default-features = false, git = "https://github.com/woozzzzy/substrate", branch = "bb-dbg" }
+pallet-balances = { version = "4.0.0-dev", default-features = false, git = "https://github.com/woozzzzy/substrate", branch = "bb-dbg" }
+sp-core = { version = "4.0.0-dev", default-features = false, git = "https://github.com/woozzzzy/substrate", branch = "bb-dbg" }
+sp-runtime = { version = "4.0.0-dev", default-features = false, git = "https://github.com/woozzzzy/substrate", branch = "bb-dbg" }
+sp-std = { version = "4.0.0-dev", default-features = false, git = "https://github.com/woozzzzy/substrate", branch = "bb-dbg" }
+sp-io = { version = "4.0.0-dev", default-features = false, git = "https://github.com/woozzzzy/substrate", branch = "bb-dbg" }
+frame-benchmarking = { version = "4.0.0-dev", git = "https://github.com/woozzzzy/substrate", branch = "bb-dbg", default-features = false, optional = true }
 fp-evm = { version = "3.0.0-dev", default-features = false, path = "../../primitives/evm" }
 primitive-types = { version = "0.10.0", default-features = false, features = ["rlp", "byteorder"] }
 rlp = { version = "0.5", default-features = false }

@@ -20,41 +20,41 @@ jsonrpc-pubsub = "18.0.0"
 futures = "0.3"
 log = "0.4.8"
 
-sc-cli = { git = "https://github.com/woozzzzy/substrate", branch = "bb", features = ["wasmtime"] }
-sp-core = { git = "https://github.com/woozzzzy/substrate", branch = "bb" }
-sc-executor = { git = "https://github.com/woozzzzy/substrate", branch = "bb", features = ["wasmtime"] }
-sc-service = { git = "https://github.com/woozzzzy/substrate", branch = "bb", features = ["wasmtime"] }
-sc-telemetry = { git = "https://github.com/woozzzzy/substrate", branch = "bb" }
-sc-keystore = { git = "https://github.com/woozzzzy/substrate", branch = "bb" }
-sc-transaction-pool = { git = "https://github.com/woozzzzy/substrate", branch = "bb" }
-sc-transaction-pool-api = { git = "https://github.com/woozzzzy/substrate", branch = "bb" }
-sc-consensus-aura = { git = "https://github.com/woozzzzy/substrate", branch = "bb" }
-sp-consensus-aura = { git = "https://github.com/woozzzzy/substrate", branch = "bb" }
-sp-consensus = { git = "https://github.com/woozzzzy/substrate", branch = "bb" }
-sc-consensus = { git = "https://github.com/woozzzzy/substrate", branch = "bb" }
-sc-consensus-manual-seal = { git = "https://github.com/woozzzzy/substrate", branch = "bb" }
-sc-network = { git = "https://github.com/woozzzzy/substrate", branch = "bb" }
-sc-finality-grandpa = { git = "https://github.com/woozzzzy/substrate", branch = "bb" }
-sp-finality-grandpa = { git = "https://github.com/woozzzzy/substrate", branch = "bb" }
-sc-client-api = { git = "https://github.com/woozzzzy/substrate", branch = "bb" }
-sp-runtime = { git = "https://github.com/woozzzzy/substrate", branch = "bb" }
-sp-timestamp = { git = "https://github.com/woozzzzy/substrate", branch = "bb" }
-sp-inherents = { git = "https://github.com/woozzzzy/substrate", branch = "bb" }
+sc-cli = { git = "https://github.com/woozzzzy/substrate", branch = "bb-dbg", features = ["wasmtime"] }
+sp-core = { git = "https://github.com/woozzzzy/substrate", branch = "bb-dbg" }
+sc-executor = { git = "https://github.com/woozzzzy/substrate", branch = "bb-dbg", features = ["wasmtime"] }
+sc-service = { git = "https://github.com/woozzzzy/substrate", branch = "bb-dbg", features = ["wasmtime"] }
+sc-telemetry = { git = "https://github.com/woozzzzy/substrate", branch = "bb-dbg" }
+sc-keystore = { git = "https://github.com/woozzzzy/substrate", branch = "bb-dbg" }
+sc-transaction-pool = { git = "https://github.com/woozzzzy/substrate", branch = "bb-dbg" }
+sc-transaction-pool-api = { git = "https://github.com/woozzzzy/substrate", branch = "bb-dbg" }
+sc-consensus-aura = { git = "https://github.com/woozzzzy/substrate", branch = "bb-dbg" }
+sp-consensus-aura = { git = "https://github.com/woozzzzy/substrate", branch = "bb-dbg" }
+sp-consensus = { git = "https://github.com/woozzzzy/substrate", branch = "bb-dbg" }
+sc-consensus = { git = "https://github.com/woozzzzy/substrate", branch = "bb-dbg" }
+sc-consensus-manual-seal = { git = "https://github.com/woozzzzy/substrate", branch = "bb-dbg" }
+sc-network = { git = "https://github.com/woozzzzy/substrate", branch = "bb-dbg" }
+sc-finality-grandpa = { git = "https://github.com/woozzzzy/substrate", branch = "bb-dbg" }
+sp-finality-grandpa = { git = "https://github.com/woozzzzy/substrate", branch = "bb-dbg" }
+sc-client-api = { git = "https://github.com/woozzzzy/substrate", branch = "bb-dbg" }
+sp-runtime = { git = "https://github.com/woozzzzy/substrate", branch = "bb-dbg" }
+sp-timestamp = { git = "https://github.com/woozzzzy/substrate", branch = "bb-dbg" }
+sp-inherents = { git = "https://github.com/woozzzzy/substrate", branch = "bb-dbg" }
 
 # These dependencies are used for the node template's RPCs
 jsonrpc-core = "18.0.0"
-sc-rpc = { git = "https://github.com/woozzzzy/substrate", branch = "bb" }
-sp-api = { git = "https://github.com/woozzzzy/substrate", branch = "bb" }
-sc-rpc-api = { git = "https://github.com/woozzzzy/substrate", branch = "bb" }
-sp-blockchain = { git = "https://github.com/woozzzzy/substrate", branch = "bb" }
-sp-block-builder = { git = "https://github.com/woozzzzy/substrate", branch = "bb" }
-sc-basic-authorship = { git = "https://github.com/woozzzzy/substrate", branch = "bb" }
-substrate-frame-rpc-system = { git = "https://github.com/woozzzzy/substrate", branch = "bb" }
-pallet-transaction-payment-rpc = { git = "https://github.com/woozzzzy/substrate", branch = "bb" }
+sc-rpc = { git = "https://github.com/woozzzzy/substrate", branch = "bb-dbg" }
+sp-api = { git = "https://github.com/woozzzzy/substrate", branch = "bb-dbg" }
+sc-rpc-api = { git = "https://github.com/woozzzzy/substrate", branch = "bb-dbg" }
+sp-blockchain = { git = "https://github.com/woozzzzy/substrate", branch = "bb-dbg" }
+sp-block-builder = { git = "https://github.com/woozzzzy/substrate", branch = "bb-dbg" }
+sc-basic-authorship = { git = "https://github.com/woozzzzy/substrate", branch = "bb-dbg" }
+substrate-frame-rpc-system = { git = "https://github.com/woozzzzy/substrate", branch = "bb-dbg" }
+pallet-transaction-payment-rpc = { git = "https://github.com/woozzzzy/substrate", branch = "bb-dbg" }
 
 # These dependencies are used for runtime benchmarking
-frame-benchmarking = { git = "https://github.com/woozzzzy/substrate", branch = "bb" }
-frame-benchmarking-cli = { git = "https://github.com/woozzzzy/substrate", branch = "bb" }
+frame-benchmarking = { git = "https://github.com/woozzzzy/substrate", branch = "bb-dbg" }
+frame-benchmarking-cli = { git = "https://github.com/woozzzzy/substrate", branch = "bb-dbg" }
 
 fc-consensus = { path = "../../client/consensus" }
 fp-consensus = { path = "../../primitives/consensus" }
@@ -70,7 +70,7 @@ pallet-ethereum = { path = "../../frame/ethereum" }
 pallet-dynamic-fee = { path = "../../frame/dynamic-fee" }
 
 [build-dependencies]
-substrate-build-script-utils = { git = "https://github.com/woozzzzy/substrate", branch = "bb" }
+substrate-build-script-utils = { git = "https://github.com/woozzzzy/substrate", branch = "bb-dbg" }
 
 [features]
 default = ["aura"]

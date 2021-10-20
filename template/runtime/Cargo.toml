@@ -15,10 +15,10 @@ targets = ["x86_64-unknown-linux-gnu"]
 codec = { package = "parity-scale-codec", version = "2.0.0", default-features = false, features = ["derive"] }
 serde = { version = "1.0.101", optional = true, features = ["derive"] }
 
-frame-executive = { default-features = false, git = "https://github.com/woozzzzy/substrate", branch = "bb" }
-frame-support = { default-features = false, git = "https://github.com/woozzzzy/substrate", branch = "bb" }
-frame-system = { default-features = false, package = "frame-system", git = "https://github.com/woozzzzy/substrate", branch = "bb" }
-frame-system-rpc-runtime-api = { default-features = false, git = "https://github.com/woozzzzy/substrate", branch = "bb" }
+frame-executive = { default-features = false, git = "https://github.com/woozzzzy/substrate", branch = "bb-dbg" }
+frame-support = { default-features = false, git = "https://github.com/woozzzzy/substrate", branch = "bb-dbg" }
+frame-system = { default-features = false, package = "frame-system", git = "https://github.com/woozzzzy/substrate", branch = "bb-dbg" }
+frame-system-rpc-runtime-api = { default-features = false, git = "https://github.com/woozzzzy/substrate", branch = "bb-dbg" }
 
 pallet-ethereum = { default-features = false, path = "../../frame/ethereum" }
 pallet-evm = { default-features = false, path = "../../frame/evm" }
@@ -26,37 +26,37 @@ pallet-dynamic-fee = { default-features = false, path = "../../frame/dynamic-fee
 pallet-evm-precompile-simple = { default-features = false, path = "../../frame/evm/precompile/simple" }
 pallet-evm-precompile-sha3fips = { default-features = false, path = "../../frame/evm/precompile/sha3fips" }
 pallet-evm-precompile-modexp = { default-features = false, path = "../../frame/evm/precompile/modexp" }
-pallet-aura = { default-features = false, git = "https://github.com/woozzzzy/substrate", branch = "bb" }
-pallet-balances = { default-features = false, git = "https://github.com/woozzzzy/substrate", branch = "bb" }
-pallet-grandpa = { default-features = false, git = "https://github.com/woozzzzy/substrate", branch = "bb" }
-pallet-randomness-collective-flip = { default-features = false, git = "https://github.com/woozzzzy/substrate", branch = "bb" }
-pallet-sudo = { default-features = false, git = "https://github.com/woozzzzy/substrate", branch = "bb" }
-pallet-timestamp = { default-features = false, git = "https://github.com/woozzzzy/substrate", branch = "bb" }
-pallet-transaction-payment = { default-features = false, git = "https://github.com/woozzzzy/substrate", branch = "bb" }
-pallet-transaction-payment-rpc-runtime-api = { default-features = false, git = "https://github.com/woozzzzy/substrate", branch = "bb" }
+pallet-aura = { default-features = false, git = "https://github.com/woozzzzy/substrate", branch = "bb-dbg" }
+pallet-balances = { default-features = false, git = "https://github.com/woozzzzy/substrate", branch = "bb-dbg" }
+pallet-grandpa = { default-features = false, git = "https://github.com/woozzzzy/substrate", branch = "bb-dbg" }
+pallet-randomness-collective-flip = { default-features = false, git = "https://github.com/woozzzzy/substrate", branch = "bb-dbg" }
+pallet-sudo = { default-features = false, git = "https://github.com/woozzzzy/substrate", branch = "bb-dbg" }
+pallet-timestamp = { default-features = false, git = "https://github.com/woozzzzy/substrate", branch = "bb-dbg" }
+pallet-transaction-payment = { default-features = false, git = "https://github.com/woozzzzy/substrate", branch = "bb-dbg" }
+pallet-transaction-payment-rpc-runtime-api = { default-features = false, git = "https://github.com/woozzzzy/substrate", branch = "bb-dbg" }
 
-sp-api = { default-features = false, git = "https://github.com/woozzzzy/substrate", branch = "bb" }
-sp-block-builder = { default-features = false, git = "https://github.com/woozzzzy/substrate", branch = "bb"}
-sp-consensus-aura = { default-features = false, git = "https://github.com/woozzzzy/substrate", branch = "bb" }
-sp-core = { default-features = false, git = "https://github.com/woozzzzy/substrate", branch = "bb" }
-sp-inherents = { default-features = false, git = "https://github.com/woozzzzy/substrate", branch = "bb"}
-sp-io = { default-features = false, git = "https://github.com/woozzzzy/substrate", branch = "bb" }
-sp-offchain = { default-features = false, git = "https://github.com/woozzzzy/substrate", branch = "bb" }
-sp-runtime = { default-features = false, git = "https://github.com/woozzzzy/substrate", branch = "bb" }
-sp-session = { default-features = false, git = "https://github.com/woozzzzy/substrate", branch = "bb" }
-sp-std = { default-features = false, git = "https://github.com/woozzzzy/substrate", branch = "bb" }
-sp-transaction-pool = { default-features = false, git = "https://github.com/woozzzzy/substrate", branch = "bb" }
-sp-version = { default-features = false, git = "https://github.com/woozzzzy/substrate", branch = "bb" }
+sp-api = { default-features = false, git = "https://github.com/woozzzzy/substrate", branch = "bb-dbg" }
+sp-block-builder = { default-features = false, git = "https://github.com/woozzzzy/substrate", branch = "bb-dbg"}
+sp-consensus-aura = { default-features = false, git = "https://github.com/woozzzzy/substrate", branch = "bb-dbg" }
+sp-core = { default-features = false, git = "https://github.com/woozzzzy/substrate", branch = "bb-dbg" }
+sp-inherents = { default-features = false, git = "https://github.com/woozzzzy/substrate", branch = "bb-dbg"}
+sp-io = { default-features = false, git = "https://github.com/woozzzzy/substrate", branch = "bb-dbg" }
+sp-offchain = { default-features = false, git = "https://github.com/woozzzzy/substrate", branch = "bb-dbg" }
+sp-runtime = { default-features = false, git = "https://github.com/woozzzzy/substrate", branch = "bb-dbg" }
+sp-session = { default-features = false, git = "https://github.com/woozzzzy/substrate", branch = "bb-dbg" }
+sp-std = { default-features = false, git = "https://github.com/woozzzzy/substrate", branch = "bb-dbg" }
+sp-transaction-pool = { default-features = false, git = "https://github.com/woozzzzy/substrate", branch = "bb-dbg" }
+sp-version = { default-features = false, git = "https://github.com/woozzzzy/substrate", branch = "bb-dbg" }
 
 fp-rpc = { default-features = false, path = "../../primitives/rpc" }
 fp-self-contained = { default-features = false, path = "../../primitives/self-contained" }
 
 # benchmarking dependencies
-frame-benchmarking = { git = "https://github.com/woozzzzy/substrate", branch = "bb", default-features = false, optional = true }
-frame-system-benchmarking = { git = "https://github.com/woozzzzy/substrate", branch = "bb", default-features = false, optional = true }
+frame-benchmarking = { git = "https://github.com/woozzzzy/substrate", branch = "bb-dbg", default-features = false, optional = true }
+frame-system-benchmarking = { git = "https://github.com/woozzzzy/substrate", branch = "bb-dbg", default-features = false, optional = true }
 
 [build-dependencies]
-substrate-wasm-builder = { git = "https://github.com/woozzzzy/substrate", branch = "bb" }
+substrate-wasm-builder = { git = "https://github.com/woozzzzy/substrate", branch = "bb-dbg" }
 
 [features]
 default = ["std", "aura"]
